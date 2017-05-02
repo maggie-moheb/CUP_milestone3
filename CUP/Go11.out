@@ -1,7 +1,19 @@
-s = "constant"
+s : "constant"
 main:
-begin_func;
-push_params: 
-n = "constant"
-push_params: 
-m = "constant"
+beginfunc:
+push_params:null 
+
+t0= call Println
+pop_params;
+
+n : 5000
+null
+push_params:null 
+
+t1= call Println
+pop_params;
+
+null
+null
+m
+null

@@ -14,7 +14,7 @@ terminal			BREAK, DEFAULT, FUNC, CASE, STRUCT, ELSE, PACKAGE, SWITCH, CONST, IF,
 					SHIFT_LEFT, SHIFT_RIGHT, BAR, SLASH, EXCLAMATION, LESS_DASH, AMBERSAND,
 					PERCENT, INCREMENT, DECREMENT;
 terminal	String	IDENTIFIER, REL_OP, STRING_LIT;	
-terminal	Integer	INT_LIT;
+terminal	String	INT_LIT;
 
 /* Non-terminals */
 nonterminal	sourceFile, packageClause, importDecls, importDecl, topLevelDecls,
@@ -48,10 +48,10 @@ precedence left COLON;
 start with sourceFile;
 
 /* The grammar */
-sourceFile	::=	packageClause optionalSemiColon importDecls topLevelDecls
+sourceFile	::=	packageClause optionalSemiColon importDecls topLevelDecls:d
 				{:
 					Z +="";
-					RESULT = Z;
+					RESULT = d;
 				:}
 				| packageClause optionalSemiColon importDecls
 				{:
@@ -59,31 +59,32 @@ sourceFile	::=	packageClause optionalSemiColon importDecls topLevelDecls
 					RESULT = Z;
 				:};
 
-topLevelDecls	::=	topLevelDecl topLevelDecls
+topLevelDecls	::=	topLevelDecl:d1 topLevelDecls:d2
 					{:
-						Z +="";
+					RESULT = d1+""+d2;
 					:}
-					| topLevelDecl
+					| topLevelDecl:d
 					{:
-						Z +="";
+					RESULT = d;
 					:};
 
-topLevelDecl	::=	declaration 
+topLevelDecl	::=	declaration:d 
 					{:
-						Z +="";
+					RESULT = d;
 					:}
-					| functionDecl optionalSemiColon
+					| functionDecl:d optionalSemiColon
 					{:
-						Z +="";
+					RESULT = d;
 					:}
-					| methodDecl optionalSemiColon
+					| methodDecl:d optionalSemiColon
 					{:
-						Z +="";
+					RESULT = d;
 					:};
 
-declaration	::=	constDecl SEMI_COLON
+declaration	::=	constDecl:d SEMI_COLON
 				{:
-					Z +="";
+					RESULT = d;
+
 				:}
 				| typeDecl optionalSemiColon
 				{:
@@ -94,9 +95,9 @@ declaration	::=	constDecl SEMI_COLON
 					Z +="";
 				:};
 				
-constDecl	::=	CONST constSpec
+constDecl	::=	CONST constSpec:c
 				{:
-					Z +="";
+					RESULT = c;
 				:}
 				| CONST OPEN_PARAN constSpecs CLOSE_PARAN
 				{:
@@ -119,37 +120,38 @@ constSpecs	::=	constSpec SEMI_COLON constSpecs
 
 constSpec	::=	IDENTIFIER:i
 				{:
-					Z = Z + i+"";
+					RESULT = i;
 				:}
 				| IDENTIFIER:i EQUAL expression
 				{:
-					Z = Z + i+" = " + S_L+"\n";
+					RESULT = i;
 				:}
-				| IDENTIFIER:i type EQUAL expression
+				| IDENTIFIER:i type EQUAL expression:e
 				{:
-					Z = Z + i+" = " + S_L+"\n";
+					RESULT = i+" : "+e;
+				
 				:};
 				
 				
-statement	::=	declaration
+statement	::=	declaration:d
 				{:
-					Z +="";
+					RESULT = d;
 				:}
-				| simpleStmt SEMI_COLON
-				{:
-					Z +="";
+				| simpleStmt:d SEMI_COLON
+				{:				
+					RESULT = d;
 				:}
-				| returnStmt SEMI_COLON
+				| returnStmt:d SEMI_COLON
 				{:
-					Z +="";
+					RESULT ="";
 				:}
 				| breakStmt SEMI_COLON
 				{:
-					Z +="";
+					RESULT ="";
 				:}
-				| block optionalSemiColon
+				| block:b optionalSemiColon
 				{:
-					Z +="";
+					RESULT = b;
 				:}
 				| ifStmt optionalSemiColon
 				{:
@@ -165,27 +167,27 @@ statement	::=	declaration
 				:};
 
 
-simpleStmt	::= expressionStmt
+simpleStmt	::= expressionStmt:a
 				{:
-					Z +="";
+					RESULT = a;
 				:}
-				| incDecStmt
+				| incDecStmt:a
 				{:
-					Z +="";
+					RESULT = a;
 				:}
-				| assignment
+				| assignment:a
 				{:
-					Z +="";
+					RESULT = a;
 				:}
-				| shortVarDecl
+				| shortVarDecl:a
 				{:
-					Z +="";
+					RESULT = a;
 				:};
 
 
-expressionStmt	::= expression
+expressionStmt	::= expression:e
 					{:
-						Z +="";
+						RESULT = e;
 					:};
 
 incDecStmt	::= expression INCREMENT
@@ -197,8 +199,9 @@ incDecStmt	::= expression INCREMENT
 					Z +="";
 				:};
 
-assignment	::=	expressionList assignOp expressionList
+assignment	::=	expressionList:e assignOp:o expressionList:e2
 				{:
+				RESULT = e+"\n"+e2;
 					Z +="";
 				:};
 
@@ -207,9 +210,9 @@ ifStmt	::=	IF expression block
 			{:
 				Z +="";
 			:}
-			| IF simpleStmt SEMI_COLON expression block
+			| IF simpleStmt:s SEMI_COLON expression block
 			{:
-				Z +="";
+				RESULT = s;
 			:}
 			| IF expression block ELSE ifStmt
 			{:
@@ -219,14 +222,14 @@ ifStmt	::=	IF expression block
 			{:
 				Z +="";
 			:}
-			| IF simpleStmt SEMI_COLON expression block ELSE ifStmt
+			| IF simpleStmt:s SEMI_COLON expression block ELSE ifStmt
 			{:
+			RESULT = s;
 				Z +="";
 			:}
-			| IF simpleStmt SEMI_COLON expression block ELSE block
+			| IF simpleStmt:s SEMI_COLON expression block ELSE block
 			{:
-				Z +="";
-			:};
+RESULT= s;			:};
 
 
 switchStmt	::=	exprSwitchStmt
@@ -239,17 +242,17 @@ exprSwitchStmt	::= SWITCH OPEN_CURLY exprCaseClauses CLOSE_CURLY
 					{:
 						Z +="";
 					:}
-					| SWITCH  simpleStmt SEMI_COLON OPEN_CURLY exprCaseClauses CLOSE_CURLY
+					| SWITCH  simpleStmt:s SEMI_COLON OPEN_CURLY exprCaseClauses CLOSE_CURLY
 					{:
-						Z +="";
+						RESULT = s;
 					:}
 					| SWITCH expression OPEN_CURLY exprCaseClauses CLOSE_CURLY
 					{:
 						Z +="";
 					:}
-					| SWITCH simpleStmt SEMI_COLON expression OPEN_CURLY exprCaseClauses CLOSE_CURLY
+					| SWITCH simpleStmt:s SEMI_COLON expression OPEN_CURLY exprCaseClauses CLOSE_CURLY
 					{:
-						Z +="";
+						RESULT = s;
 					:};
 
 
@@ -330,15 +333,14 @@ condition	::=	expression
 					Z +="";
 				:};
 
-initStmt	::=	simpleStmt
-				{:
-					Z +="";
+initStmt	::=	simpleStmt:s{:
+					RESULT = s;
 				:};
 
 
-postStmt	::=	simpleStmt
+postStmt	::=	simpleStmt:s
 				{:
-					Z +="";
+					RESULT = s;
 				:};
 
 
@@ -368,23 +370,23 @@ identifierList	::=	IDENTIFIER
 						Z +="";
 					:};
 
-expressionList	::=	expression
+expressionList	::=	expression:e
 					{:
-						Z +="";
+						RESULT = e;
 					:}
-					| expression COMMA expressionList
+					| expression:e COMMA expressionList:e1
 					{:
-						Z +="";
+						RESULT = e+"\n"+e1;
 					:};
 
 
-expression	::=	unaryExpr
+expression	::=	unaryExpr:u
 				{:
-					Z +="";
+					RESULT = u;
 				:}
-				| expression binaryOp expression
+				| expression:e1 binaryOp:o expression:e2
 				{:
-					Z +="";
+					RESULT = e1+""+o+""+e2;
 				:};
 
 
@@ -568,9 +570,9 @@ shortVarDecl	::= identifierList	COLON_EQUAL	expression
 					:};
 
 
-functionDecl	::= FUNC functionName function
+functionDecl	::= FUNC functionName:f function:f2
 					{:
-						Z +="";
+						RESULT = f +"\n" +f2;
 					:}
 					| FUNC functionName signature
 					{:
@@ -579,7 +581,7 @@ functionDecl	::= FUNC functionName function
 
 functionName	::= IDENTIFIER:i
 					{:
-						Z +=i +":\nbegin_func;\n";
+						RESULT = i+":";
 					:};
 
 
@@ -604,46 +606,47 @@ methodName	::=	IDENTIFIER
 				:};
 
 
-unaryExpr	::=	primaryExpr
+unaryExpr	::=	primaryExpr:p
 				{:
-					Z +="";
+					RESULT = p;
 				:}
-				| unaryOp unaryExpr
+				| unaryOp:o unaryExpr:e
 				{:
-					Z +="";
+					RESULT = o+""+e;
 				:};
 
-primaryExpr	::=	operand
-				{:
-					Z +="";
+primaryExpr	::=	operand:o
+				{:			
+					RESULT = o;
 				:}
-				| primaryExpr selector
+				| primaryExpr:p selector:s
 				{:
-					Z +="";
+
+					RESULT = p+""+s;
 				:}
-				| primaryExpr arguments
-				{:
-					Z +="";
+				| primaryExpr:p arguments:a
+				{:			
+					RESULT = a+"\n"+ p ;
 				:};
 
 
 
-selector	::= DOT IDENTIFIER
+selector	::= DOT IDENTIFIER:i
 				{:
-					Z +="";
+					RESULT = i;
 				:};
 
 arguments	::=	OPEN_PARAN CLOSE_PARAN
 				{:
-					Z +="";
+					RESULT ="";
 				:}
-				| OPEN_PARAN expressionList CLOSE_PARAN
+				| OPEN_PARAN expressionList:e CLOSE_PARAN
 				{:
-					Z +="push_params: \n";
+				RESULT="push_params:"+e+" \n";
 				:}
-				| OPEN_PARAN TYPE type COMMA expressionList CLOSE_PARAN
+				| OPEN_PARAN TYPE type COMMA expressionList:e CLOSE_PARAN
 				{:
-					Z +="";
+					RESULT = e;
 				:};
 
 
@@ -662,13 +665,13 @@ receiverType	::=	OPEN_PARAN ASTRISK typeName CLOSE_PARAN
 						Z +="";
 					:};
 
-operand	::=	literal
+operand	::=	literal:l
 			{:
-				Z +="";
+				RESULT = l;
 			:}
-			| operandName
+			| operandName:o
 			{:
-				Z +="";
+				RESULT = o;
 			:}
 			| methodExpr
 			{:
@@ -679,13 +682,13 @@ operand	::=	literal
 				Z +="";
 			:};
 
-literal	::=	basicLit
+literal	::=	basicLit:b
 			{:
-				Z +="";
+				RESULT = b;
 			:}
-			| functionLit
+			| functionLit:f
 			{:
-				Z +="";
+				RESULT = f;
 			:};
 
 literalType	::=	structType
@@ -764,41 +767,41 @@ element	::= expression
 				Z +="";
 			:};
 
-basicLit	::=	INT_LIT
+basicLit	::=	INT_LIT:i
 				{:
-					Z +="";
+					RESULT = i;
 				:}
 				| STRING_LIT:s_l 
 				{:
-					S_L = s_l;
+					RESULT = s_l +"\n";
 				:};
 
-operandName	::=	IDENTIFIER
+operandName	::=	IDENTIFIER:i
 				{:
-					Z +="";
+				S_L = i;
 				:}
-				| qualifiedIdent
+				| qualifiedIdent:i
 				{:
-					Z +="";
+					RESULT = i;
 				:};
 
 
 qualifiedIdent	::=	DOT packageName DOT IDENTIFIER:i
 					{:
-						Z += "t"+ variable_count+ "= call "+i + "\n";
+						RESULT = "t"+ variable_count+ "= call "+i + "\n"+"pop_params;\n";
 						variable_count++;
 					:};
 					
 					
-functionLit	::=	FUNC function
+functionLit	::=	FUNC function:f
 				{:
-					Z +="";
+					RESULT = f;
 				:};
 
 
-function	::=	signature functionBody
+function	::=	signature functionBody:b
 				{:
-					Z +="";
+				RESULT = b;
 				:};
 
 signature	::=	parameters
@@ -849,25 +852,28 @@ parameterDecl	::= identifierList type
 						Z +="";
 					:};
 
-functionBody	::= block
+functionBody	::= block:b
 					{:
-						Z +="";
+					RESULT = b;
 					:};
 
 
-block	::= OPEN_CURLY statementList CLOSE_CURLY
+block	::= OPEN_CURLY statementList:l CLOSE_CURLY
 			{:
-				Z +="";
+
+				RESULT = "beginfunc:\n"+l;
 			:};
 
 
-statementList	::=	statement statementList
+statementList	::=	statement:s statementList:s1
 					{:
-						Z +="";
+						RESULT = s+"\n"+s1;
+
+
 					:}
 					| 
 					{:
-						Z +="";
+						RESULT ="";
 					:};
 
 packageClause	::=	PACKAGE packageName
