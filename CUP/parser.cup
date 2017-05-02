@@ -61,38 +61,38 @@ sourceFile	::=	packageClause optionalSemiColon importDecls topLevelDecls:d
 
 topLevelDecls	::=	topLevelDecl:d1 topLevelDecls:d2
 					{:
-					RESULT = d1+""+d2;
+						RESULT = d1+""+d2;
 					:}
 					| topLevelDecl:d
 					{:
-					RESULT = d;
+						RESULT = d;
 					:};
 
 topLevelDecl	::=	declaration:d 
 					{:
-					RESULT = d;
+						RESULT = d;
 					:}
-					| functionDecl:d optionalSemiColon
+					| functionDecl:fd optionalSemiColon:osc
 					{:
-					RESULT = d;
+						RESULT = fd +""+ osc;
 					:}
-					| methodDecl:d optionalSemiColon
+					| methodDecl:md optionalSemiColon:osc
 					{:
-					RESULT = d;
+						RESULT = md+""+osc;
 					:};
 
-declaration	::=	constDecl:d SEMI_COLON
+declaration	::=	constDecl:d SEMI_COLON:sc
 				{:
-					RESULT = d;
+					RESULT = d+""+sc;
 
 				:}
-				| typeDecl optionalSemiColon
+				| typeDecl:td optionalSemiColon:osc
 				{:
-					Z +="";
+					RESULT = td+""+osc;
 				:}
-				| varDecl SEMI_COLON
+				| varDecl:vd SEMI_COLON:sc
 				{:
-					Z +="";
+					RESULT = vd+""+sc;
 				:};
 				
 constDecl	::=	CONST constSpec:c
@@ -128,7 +128,7 @@ constSpec	::=	IDENTIFIER:i
 				:}
 				| IDENTIFIER:i type EQUAL expression:e
 				{:
-					RESULT = i+" : "+e;
+					RESULT = i+" = "+e;
 				
 				:};
 				
@@ -229,7 +229,8 @@ ifStmt	::=	IF expression block
 			:}
 			| IF simpleStmt:s SEMI_COLON expression block ELSE block
 			{:
-RESULT= s;			:};
+				RESULT= s;			
+			:};
 
 
 switchStmt	::=	exprSwitchStmt
@@ -372,6 +373,7 @@ identifierList	::=	IDENTIFIER
 
 expressionList	::=	expression:e
 					{:
+						////System.out.println("expr_l " + e);
 						RESULT = e;
 					:}
 					| expression:e COMMA expressionList:e1
@@ -382,6 +384,7 @@ expressionList	::=	expression:e
 
 expression	::=	unaryExpr:u
 				{:
+					//System.out.println("expression " + u);
 					RESULT = u;
 				:}
 				| expression:e1 binaryOp:o expression:e2
@@ -572,7 +575,7 @@ shortVarDecl	::= identifierList	COLON_EQUAL	expression
 
 functionDecl	::= FUNC functionName:f function:f2
 					{:
-						RESULT = f +"\n" +f2;
+						RESULT = "\n"+ f +"\n" +f2;
 					:}
 					| FUNC functionName signature
 					{:
@@ -608,6 +611,7 @@ methodName	::=	IDENTIFIER
 
 unaryExpr	::=	primaryExpr:p
 				{:
+					//System.out.println("unaryExpr " + p);
 					RESULT = p;
 				:}
 				| unaryOp:o unaryExpr:e
@@ -616,7 +620,8 @@ unaryExpr	::=	primaryExpr:p
 				:};
 
 primaryExpr	::=	operand:o
-				{:			
+				{:		
+					//System.out.println("operand " + o);	
 					RESULT = o;
 				:}
 				| primaryExpr:p selector:s
@@ -642,7 +647,7 @@ arguments	::=	OPEN_PARAN CLOSE_PARAN
 				:}
 				| OPEN_PARAN expressionList:e CLOSE_PARAN
 				{:
-				RESULT="push_params:"+e+" \n";
+					RESULT="\npush_params: "+e;
 				:}
 				| OPEN_PARAN TYPE type COMMA expressionList:e CLOSE_PARAN
 				{:
@@ -667,23 +672,26 @@ receiverType	::=	OPEN_PARAN ASTRISK typeName CLOSE_PARAN
 
 operand	::=	literal:l
 			{:
+				//System.out.println("literal "+l);
 				RESULT = l;
 			:}
 			| operandName:o
 			{:
+				//System.out.println("operandName " + o);
 				RESULT = o;
 			:}
-			| methodExpr
+			| methodExpr:me
 			{:
-				Z +="";
+				RESULT = me;
 			:}
-			| OPEN_PARAN expression CLOSE_PARAN
+			| OPEN_PARAN expression:e CLOSE_PARAN
 			{:
-				Z +="";
+				RESULT = e;
 			:};
 
 literal	::=	basicLit:b
 			{:
+				////System.out.println("basicLit: " + b);
 				RESULT = b;
 			:}
 			| functionLit:f
@@ -773,12 +781,12 @@ basicLit	::=	INT_LIT:i
 				:}
 				| STRING_LIT:s_l 
 				{:
-					RESULT = s_l +"\n";
+					RESULT = s_l;
 				:};
 
 operandName	::=	IDENTIFIER:i
 				{:
-				S_L = i;
+					RESULT = i;
 				:}
 				| qualifiedIdent:i
 				{:
@@ -788,7 +796,7 @@ operandName	::=	IDENTIFIER:i
 
 qualifiedIdent	::=	DOT packageName DOT IDENTIFIER:i
 					{:
-						RESULT = "t"+ variable_count+ "= call "+i + "\n"+"pop_params;\n";
+						RESULT = "t"+ variable_count+ "= call "+i + "\n"+"pop_params;";
 						variable_count++;
 					:};
 					
@@ -801,7 +809,7 @@ functionLit	::=	FUNC function:f
 
 function	::=	signature functionBody:b
 				{:
-				RESULT = b;
+					RESULT = b;
 				:};
 
 signature	::=	parameters
@@ -861,7 +869,7 @@ functionBody	::= block:b
 block	::= OPEN_CURLY statementList:l CLOSE_CURLY
 			{:
 
-				RESULT = "beginfunc:\n"+l;
+				RESULT = "beginfunc:"+l+"\nend_func;";
 			:};
 
 
