@@ -1,0 +1,23 @@
+main:
+begin_func;
+i = 0
+L2:
+t0 =i<=5
+IfZ t0 Goto L3
+s = " "
+j = i
+L0:
+t1 =j<s
+IfZ t1 Goto L1
+t2 =s+"*"
+s=t2
+j =j + 1
+Goto L0
+L1:
+push_params: s
+t3= call Println
+pop_params;
+i =i + 1
+Goto L2
+L3:
+end_func;

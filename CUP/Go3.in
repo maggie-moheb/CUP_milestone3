@@ -1,0 +1,31 @@
+package main;
+
+import "fmt"
+
+func add(x int, y int) ( i int){
+		x = x + y;
+		return x;
+}
+
+
+func swap(x, y string) (s1 string, s2 string) {
+	return y, x;
+}
+
+func split(sum int) (x, y int) {
+	x = sum * 4 / 9;
+	y = sum - x;
+	return x, y;
+}
+
+func main() {
+	a,b := swap(`hello`, "world		");
+	.fmt.Println(a, b);
+
+    x := add(4,13);
+    .fmt.println(x); 
+    
+    z,y:=split(17);
+    
+    .fmt.Println(z,y);
+}

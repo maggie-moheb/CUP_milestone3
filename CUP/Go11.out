@@ -1,0 +1,7 @@
+s = "constant"
+main:
+begin_func;
+push_params: 
+n = "constant"
+push_params: 
+m = "constant"

@@ -1,0 +1,25 @@
+main:
+begin_func;
+push_params: "Go runs on"
+t0= call Print
+pop_params;
+os = "linux"
+t4 = os=="darwin"
+IfZ t4 GoTo L0
+push_params: "OS X."
+t1= call Println
+pop_params;
+GoTo L2
+L0:
+t5 = os=="linux"
+IfZ t5 GoTo L1
+push_params: "Linux."
+t2= call Println
+pop_params;
+GoTo L2
+L1:
+push_params: "Others."
+t3= call Printf
+pop_params;
+L2:
+end_func;

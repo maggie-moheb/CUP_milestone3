@@ -1,0 +1,56 @@
+main:
+begin_func;
+t0 =7%2
+t1 =t0==0
+If t1 Goto L0
+Goto L1
+L0:
+push_params: "7 is even"
+t2= call Println
+pop_params;
+Goto LL0
+L1:
+push_params: "7 is odd"
+t3= call Println
+pop_params;
+LL0:
+t4 =12%4
+t5 =t4==0
+t6 =12%3
+t7 =t6==0
+t8 =t5&&t7
+If t8 Goto L2
+Goto L3
+L2:
+push_params: "12 is divisible by 4, and 3"
+t9= call Println
+pop_params;
+L3:
+num = 9
+t10 =num<0
+If t10 Goto L6
+Goto L7
+L6:
+push_params: num
+push_params: "is negative"
+t11= call Println
+pop_params;
+Goto LL6
+L7:
+t12 =num<10
+If t12 Goto L4
+Goto L5
+L4:
+push_params: num
+push_params: "has 1 digit"
+t13= call Println
+pop_params;
+Goto LL4
+L5:
+push_params: num
+push_params: "has multiple digits"
+t14= call Println
+pop_params;
+LL4:
+LL6:
+end_func;

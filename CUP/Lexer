@@ -1,0 +1,295 @@
+
+import java.lang.System;
+import java.io.*;
+import java_cup.runtime.Symbol;
+import java.util.Stack;
+
+%%
+%class Lexer
+
+%implements java_cup.runtime.Scanner
+%function next_token
+%type java_cup.runtime.Symbol
+%char
+%line
+
+%state curly, square, paran
+
+%{
+	//initialize  variables to be used by class
+	Stack<Character> brackets = new Stack<Character>();
+	int curlyCounter	= 0;
+	int squareCounter	= 0;
+	int paranCounter	= 0;
+%}
+
+
+%init{
+	//Add code to be executed on initialization of the lexer
+	brackets.add('$');
+%init}
+
+%eofval{
+	if(brackets.peek()!='$'){
+		return new Symbol(sym.EOF, ("There is some " + brackets.peek() + " that is not closed"));
+	}else{
+		return new Symbol(sym.EOF, ("Done"));
+	}
+%eofval}
+
+
+PACKAGE=(package)
+IMPORT=(import)
+DEFAULT=(default)
+FUNC=(func)
+BREAK=(break)
+CASE=(case)
+STRUCT=(struct)
+ELSE=(else)
+SWITCH=(switch)
+CONST=(const)
+IF=(if)
+TYPE=(type)
+FOR=(for)
+RETURN=(return)
+VAR=(var)
+NEWLINE=[\n]
+ESCAPEDCHAR= (\\[a|b|f|r|t|v|n|\\|\"|\'])
+LETTER= ([a-z]|[A-Z]|_)
+DIGIT= [0-9]
+IDENTIFIER= ({LETTER}+{DIGIT}*)+
+STRINGLIT=((`[^`]+`)|(\"([^\n\"]|{ESCAPEDCHAR})+\"))
+INTLIT=([1-9]{DIGIT}*|0)
+REL_OP=((==)|(!=)|<|(<=)|>|(>=))
+COMMENT=(//(.)*)
+SPACES=(\t|\b|\ )+
+
+%%
+
+<YYINITIAL, paran, curly, square> {PACKAGE} {
+  return new Symbol(sym.PACKAGE, yytext());
+}
+<YYINITIAL, paran, curly, square> {IMPORT}  {
+  return new Symbol(sym.IMPORT, yytext());
+}
+<YYINITIAL, paran, curly, square> {FUNC} {
+  return new Symbol(sym.FUNC, yytext());
+}
+<YYINITIAL, paran, curly, square> {DEFAULT} {
+  return new Symbol(sym.DEFAULT, yytext());
+}
+<YYINITIAL, paran, curly, square> {BREAK} {
+  return new Symbol(sym.BREAK, yytext());
+}
+<YYINITIAL, paran, curly, square> {CASE} {
+  return new Symbol(sym.CASE, yytext());
+}
+<YYINITIAL, paran, curly, square> {STRUCT} {
+  return new Symbol(sym.STRUCT, yytext());
+}
+<YYINITIAL, paran, curly, square> {ELSE} {
+  return new Symbol(sym.ELSE, yytext());
+}
+<YYINITIAL, paran, curly, square> {SWITCH} {
+  return new Symbol(sym.SWITCH, yytext());
+}
+<YYINITIAL, paran, curly, square> {CONST} {
+  return new Symbol(sym.CONST, yytext());
+}
+<YYINITIAL, paran, curly, square> {IF} {
+  return new Symbol(sym.IF, yytext());
+}
+<YYINITIAL, paran, curly, square> {TYPE} {
+  return new Symbol(sym.TYPE, yytext());
+}
+<YYINITIAL, paran, curly, square> {FOR} {
+  return new Symbol(sym.FOR, yytext());
+}
+<YYINITIAL, paran, curly, square> {RETURN} {
+  return new Symbol(sym.RETURN, yytext());
+}
+<YYINITIAL, paran, curly, square> {VAR} {
+  return new Symbol(sym.VAR, yytext());
+}
+<YYINITIAL, paran, curly, square> {STRINGLIT} {
+ return new Symbol(sym.STRING_LIT, yytext());
+}
+<YYINITIAL, paran, curly, square> {INTLIT} {
+ return new Symbol(sym.INT_LIT, yytext());
+}
+<YYINITIAL, paran, curly, square> {NEWLINE} {
+}
+<YYINITIAL, paran, curly, square> {ESCAPEDCHAR} {
+}
+<YYINITIAL, paran, curly, square> {COMMENT} {
+}
+<YYINITIAL, paran, curly, square> {SPACES} {
+}
+<YYINITIAL, paran, curly, square> {IDENTIFIER} {
+  return new Symbol(sym.IDENTIFIER, yytext());
+}
+<YYINITIAL, paran, curly, square> {REL_OP} {
+  return new Symbol(sym.REL_OP, yytext());
+}
+<YYINITIAL, paran, curly, square> ; {
+  return new Symbol(sym.SEMI_COLON, yytext());
+}
+<YYINITIAL, paran, curly, square> , {
+  return new Symbol(sym.COMMA, yytext());
+}
+<YYINITIAL, paran, curly, square> \. {
+  return new Symbol(sym.DOT, yytext());
+}
+<YYINITIAL, paran, curly, square> : {
+  return new Symbol(sym.COLON, yytext());
+}
+<YYINITIAL, paran, curly, square> := {
+  return new Symbol(sym.COLON_EQUAL, yytext());
+}
+<YYINITIAL, paran, curly, square> = {
+  return new Symbol(sym.EQUAL, yytext());
+}
+<YYINITIAL, paran, curly, square> \.\.\. {
+  return new Symbol(sym.CDOTS, yytext());
+}
+<YYINITIAL, paran, curly, square> \* {
+  return new Symbol(sym.ASTRISK, yytext());
+}
+<YYINITIAL, paran, curly, square> \|\| {
+  return new Symbol(sym.OR_OP, yytext());
+}
+<YYINITIAL, paran, curly, square> && {
+  return new Symbol(sym.AND_OP, yytext());
+}
+<YYINITIAL, paran, curly, square> \+ {
+  return new Symbol(sym.PLUS, yytext());
+}
+<YYINITIAL, paran, curly, square> \- {
+  return new Symbol(sym.MINUS, yytext());
+}
+<YYINITIAL, paran, curly, square> & {
+  return new Symbol(sym.AMBERSAND, yytext());
+}
+<YYINITIAL, paran, curly, square> ! {
+  return new Symbol(sym.EXCLAMATION, yytext());
+}
+<YYINITIAL, paran, curly, square> % {
+  return new Symbol(sym.PERCENT, yytext());
+}
+<YYINITIAL, paran, curly, square> <- {
+  return new Symbol(sym.LESS_DASH, yytext());
+}
+<YYINITIAL, paran, curly, square> / {
+  return new Symbol(sym.SLASH, yytext());
+}
+<YYINITIAL, paran, curly, square> \| {
+  return new Symbol(sym.BAR, yytext());
+}
+<YYINITIAL, paran, curly, square> << {
+  return new Symbol(sym.SHIFT_LEFT, yytext());
+}
+<YYINITIAL, paran, curly, square> >> {
+  return new Symbol(sym.SHIFT_RIGHT, yytext());
+}
+<YYINITIAL, paran, curly, square> \+\+ {
+  return new Symbol(sym.INCREMENT, yytext());
+}
+<YYINITIAL, paran, curly, square> -- {
+  return new Symbol(sym.DECREMENT, yytext());
+}
+<YYINITIAL, paran, curly, square> \( {
+	paranCounter++;
+	yybegin(paran);
+	brackets.push('(');
+  	return new Symbol(sym.OPEN_PARAN, yytext());
+}
+<paran> \) {
+	brackets.pop();
+	paranCounter--;
+	switch(brackets.peek()){
+		case '(': 
+				yybegin(paran); break;
+		case '[':
+				yybegin(square); break;
+		case '{':
+				yybegin(curly); break;
+		default:
+				yybegin(YYINITIAL); break;
+	}
+	return new Symbol(sym.CLOSE_PARAN, yytext());
+}
+<curly, square> \) {
+	if(paranCounter == 0){
+		return new Symbol(sym.error, (") has no matching ( in line " + (yyline + 1)));
+	}else{
+		return new Symbol(sym.error, ("You have a missing bracket in line " + (yyline + 1)));
+	}
+}
+<YYINITIAL> \) {
+	return new Symbol(sym.error, (") has no matching ( in line " + (yyline + 1)));
+}
+<YYINITIAL, paran, curly, square> \{ {
+	curlyCounter++;
+	yybegin(curly);
+	brackets.push('{');
+	return new Symbol(sym.OPEN_CURLY, yytext());
+}
+<curly> \} {
+	brackets.pop();
+	curlyCounter--;
+	switch(brackets.peek()){
+		case '(': 
+				yybegin(paran); break;
+		case '[':
+				yybegin(square); break;
+		case '{':
+				yybegin(curly); break;
+		default:
+				yybegin(YYINITIAL); break;
+	}
+	return new Symbol(sym.CLOSE_CURLY, yytext());
+}
+<paran, square> \} {
+	if(curlyCounter == 0){
+		return new Symbol(sym.error, ("} has no matching { in line " + (yyline + 1)));
+	}else{
+		return new Symbol(sym.error, ("You have a missing bracket in line " + (yyline + 1)));
+	}
+}
+<YYINITIAL> \} {
+	return new Symbol(sym.error, ("} has no matching { in line " + (yyline + 1)));
+}
+<YYINITIAL, paran, curly, square> \[ {
+	squareCounter++;
+	yybegin(square);
+	brackets.push('[');
+	return new Symbol(sym.OPEN_SQUARE, yytext());
+}
+<square> \] {
+	brackets.pop();
+	squareCounter--;
+	switch(brackets.peek()){
+		case '(': 
+				yybegin(paran); break;
+		case '[':
+			yybegin(square); break;
+		case '{':
+			yybegin(curly); break;
+		default:
+			yybegin(YYINITIAL); break;
+	}
+	return new Symbol(sym.CLOSE_SQUARE, yytext());
+}
+<paran, curly> \] {
+	if(squareCounter == 0){
+		return new Symbol(sym.error, ("] has no matching [ in line " + (yyline + 1)));
+	}else{
+		return new Symbol(sym.error, ("You have a missing bracket in line " + (yyline + 1)));
+	}
+}
+<YYINITIAL> \] {
+	return new Symbol(sym.error, ("] has no matching [ in line " + (yyline + 1)));
+}
+<YYINITIAL, paran, curly, square> . {
+  return new Symbol(sym.error, "Invalid input: " + yytext() + " in line " + (yyline + 1));
+}

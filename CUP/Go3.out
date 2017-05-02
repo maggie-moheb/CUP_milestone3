@@ -1,0 +1,47 @@
+add:
+begin_func;
+t0 =x+y
+x=t0
+return x
+end_func;
+swap:
+begin_func;
+return y,x
+end_func;
+split:
+begin_func;
+t1 =sum*4
+t2 =t1/9
+x=t2
+t3 =sum-x
+y=t3
+return x,y
+end_func;
+main:
+begin_func;
+push_params: `hello`
+push_params: "world		"
+t4= call swap
+pop_params;
+a,b = t4
+push_params: a
+push_params: b
+t5= call Println
+pop_params;
+push_params: 4
+push_params: 13
+t6= call add
+pop_params;
+x = t6
+push_params: x
+t7= call println
+pop_params;
+push_params: 17
+t8= call split
+pop_params;
+z,y = t8
+push_params: z
+push_params: y
+t9= call Println
+pop_params;
+end_func;
