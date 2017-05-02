@@ -83,16 +83,16 @@ topLevelDecl	::=	declaration:d
 
 declaration	::=	constDecl:d SEMI_COLON:sc
 				{:
-					RESULT = d+""+sc;
+					RESULT = d;
 
 				:}
 				| typeDecl:td optionalSemiColon:osc
 				{:
-					RESULT = td+""+osc;
+					RESULT = td;
 				:}
 				| varDecl:vd SEMI_COLON:sc
 				{:
-					RESULT = vd+""+sc;
+					RESULT = vd;
 				:};
 				
 constDecl	::=	CONST constSpec:c
@@ -533,9 +533,10 @@ typeSpec	::=	IDENTIFIER type
 
 
 
-varDecl	::=	VAR varSpec 
+varDecl	::=	VAR varSpec:vs 
 			{:
-				Z +="";
+				RESULT="t"+variable_count+vs + " = " + "t"+variable_count;
+				variable_count++;
 			:}
 			| VAR OPEN_PARAN varSpecs CLOSE_PARAN
 			{:
@@ -552,9 +553,9 @@ varSpecs	::= varSpec SEMI_COLON varSpecs
 					Z +="";
 				:};
 
-varSpec	::= IDENTIFIER EQUAL expression
+varSpec	::= IDENTIFIER:i EQUAL expression:e
 			{:
-				Z +="";
+				RESULT = " = "+e+"\n"+i;
 			:}
 			| IDENTIFIER type
 			{:
@@ -981,9 +982,9 @@ binaryOp	::= OR_OP
 				{:
 					Z +="";
 				:}
-				| mulOp
+				| mulOp:mo
 				{:
-					Z +="";
+					RESULT = mo;
 				:};
 
 addOp	::=	PLUS
@@ -1006,7 +1007,7 @@ mulOp	::=	ASTRISK
 			:}
 			| SLASH
 			{:
-				Z +="";
+				RESULT="/";
 			:}
 			| SHIFT_LEFT
 			{:
