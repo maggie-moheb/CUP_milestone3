@@ -210,8 +210,9 @@ assignment	::=	expressionList:e assignOp:o expressionList:e2
 
 ifStmt	::=	IF expression:e block:b
 			{:
-				//System.out.println("da el block: " + b);
-				RESULT = e + "" + b;
+				++label_count;
+				RESULT =  e + "\nIf t" + (variable_count-1) + " Goto L"+label_count+"\nGoto L" 
+							+ ++label_count + "\nL" + (label_count-1)+":\n"+b;
 			:}
 			| IF simpleStmt:s SEMI_COLON expression:e block:b
 			{:
