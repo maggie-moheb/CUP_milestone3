@@ -47,12 +47,7 @@ start with sourceFile;
 /* The grammar */
 sourceFile	::=	packageClause optionalSemiColon importDecls topLevelDecls:d
 				{:
-					//RESULT = (Expression)d.code;
-					RESULT = d;
-//					while(!operandQueue.isEmpty()) {
-//						System.out.println("QUEUE: " + operandQueue.peek());
-//						operandQueue.remove();
-//					}
+					RESULT = d.toString().replace("\n\n", "\n");
 				:}
 				| packageClause optionalSemiColon importDecls:d
 				{:
@@ -1040,7 +1035,7 @@ shortVarDecl	::= identifierList:i COLON_EQUAL expression:e
 						if(e.toString().length() >=3) {
 							RESULT = e +"\n"+ i + " = " + e.toString().substring(1,3);
 						}else {
-							RESULT = e +"\n"+ i + " = " + e;
+							RESULT = i + " = " + e;
 						}
 					:};
 	
@@ -1165,7 +1160,8 @@ arguments	::=	OPEN_PARAN CLOSE_PARAN
 				:}
 				| OPEN_PARAN expressionList:e CLOSE_PARAN
 				{:
-					RESULT="\npush_params: "+e;
+					String el = e.toString().replace("\n", "\npush_params: ");
+					RESULT="\npush_params: "+el;
 				:}
 				| OPEN_PARAN TYPE type COMMA expressionList:e CLOSE_PARAN
 				{:
@@ -1280,29 +1276,64 @@ ifStmt	::=	IF expression:e block:b
 			{:
 				++label_count;
 				RESULT =  e + "\nIf t" + (variable_count-1) + " Goto L"+label_count+"\nGoto L" 
-							+ ++label_count + "\nL" + (label_count-1)+":\n"+b;
+							+ ++label_count + "\nL" + (label_count-1)+":\n"+b + "\nL"+label_count+":";
 			:}
 			| IF simpleStmt:s SEMI_COLON expression:e block:b
 			{:
-				RESULT = s + "" + e + "" + b;
+				RESULT =  s + "" + e + "" + b;
 			:}
-			| IF expression block ELSE ifStmt
+			| IF expression:e block:b ELSE ifStmt:fs
 			{:
-				Z +="";
+				++label_count;
+				RESULT = e + "\nIf t" + (variable_count-2) 
+						+ " Goto L"+label_count+"\nGoto L" 
+						+ ++label_count + "\nL" + (label_count-1)+":\n"+b + "\nGoto LL" +  (label_count-1)
+						+ "\nL"+label_count+":"
+						+"\n"+fs + "\nLL" +  (label_count-1)+":";
 			:}
 			| IF expression:e block:b1 ELSE block:b2
 			{:
 				++label_count;
-				RESULT =  e + "\nIf t" + (variable_count-2) 
+				RESULT = e + "\nIf t" + (variable_count-2) 
 						+ " Goto L"+label_count+"\nGoto L" 
 						+ ++label_count + "\nL" + (label_count-1)+":\n"+b1 + "\nGoto LL" +  (label_count-1)
 						+ "\nL"+label_count+":"
 						+"\n"+b2 + "\nLL" +  (label_count-1)+":";
 			:}
-			| IF simpleStmt:s SEMI_COLON expression block ELSE ifStmt
+			| IF simpleStmt:e SEMI_COLON expression:e1 block:b ELSE ifStmt:fs
 			{:
-				RESULT = s;
-				Z +="";
+				String fstoperand = e1.toString();
+				int fstCutfst = 0;
+				int scndCutfst = e1.toString().length();
+				int lstIdxEq = 0;
+				boolean foundEq = false;
+				String temp = e1.toString();
+				while(lstIdxEq > -1) {
+					lstIdxEq = temp.lastIndexOf('=');
+					if(lstIdxEq != -1) {
+						if(temp.charAt(lstIdxEq -1) != '=') {
+							foundEq = true;
+							break;
+						}
+					
+						temp = temp.substring(0, lstIdxEq-1);
+					}
+				}
+				if(foundEq) {
+					scndCutfst = lstIdxEq;
+				}
+				int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
+				if(terminalIndex > -1 && terminalIndex < e1.toString().substring(0, scndCutfst).length() 
+					&& Character.isDigit(e1.toString().charAt(terminalIndex+1))) {
+						fstCutfst = terminalIndex;
+				}
+				fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+				++label_count;
+				RESULT = e + "\n" + e1 + "\nIf "+ fstoperand 
+						+ " Goto L"+label_count+"\nGoto L" 
+						+ ++label_count + "\nL" + (label_count-1)+":\n"+b + "\nGoto LL" +  (label_count-1)
+						+ "\nL"+label_count+":"
+						+"\n"+fs + "\nLL" +  (label_count-1)+":";
 			:}
 			| IF simpleStmt:s SEMI_COLON expression block ELSE block
 			{:
