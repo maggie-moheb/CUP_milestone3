@@ -47,11 +47,19 @@ start with sourceFile;
 /* The grammar */
 sourceFile	::=	packageClause optionalSemiColon importDecls topLevelDecls:d
 				{:
-					RESULT = d.toString().replace("\n\n", "\n");
+					String res = d.toString();
+					if(res.charAt(0) == '\n') {
+						res = res.substring(1);
+					}
+					RESULT = res.replace("\n\n", "\n");
 				:}
 				| packageClause optionalSemiColon importDecls:d
 				{:
-					RESULT = d.toString().replace("\n\n", "\n");
+					String res = d.toString();
+					if(res.charAt(0) == '\n') {
+						res = res.substring(1);
+					}
+					RESULT = res.replace("\n\n", "\n");
 				:};
 				
 optionalSemiColon	::=	SEMI_COLON
@@ -223,7 +231,7 @@ identifierList	::=	IDENTIFIER:i
 					:}
 					| IDENTIFIER:i COMMA identifierList:i1
 					{:
-						RESULT = i + "" + i1;
+						RESULT = i + "," + i1;
 					:};		
 					
 expressionList	::=	expression:e
@@ -1030,12 +1038,39 @@ varSpec	::= IDENTIFIER:i EQUAL expression:e
 				RESULT = i+" "+t+" "+e;
 			:};
 		
-shortVarDecl	::= identifierList:i COLON_EQUAL expression:e
+shortVarDecl	::= identifierList:i COLON_EQUAL expression:e1
 					{:
-						if(e.toString().length() >=3) {
-							RESULT = e +"\n"+ i + " = " + e.toString().substring(1,3);
+						String fstoperand = e1.toString();
+						int fstCutfst = 0;
+						int scndCutfst = e1.toString().length();
+						int lstIdxEq = 0;
+						boolean foundEq = false;
+						String temp = e1.toString();
+						while(lstIdxEq > -1) {
+							lstIdxEq = temp.lastIndexOf('=');
+							if(lstIdxEq != -1) {
+								if(temp.charAt(lstIdxEq -1) != '=') {
+									foundEq = true;
+									break;
+								}
+							
+								temp = temp.substring(0, lstIdxEq-1);
+							}
+						}
+						if(foundEq) {
+							scndCutfst = lstIdxEq;
+						}
+						int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
+						if(terminalIndex > -1 && terminalIndex < e1.toString().substring(0, scndCutfst).length() 
+							&& Character.isDigit(e1.toString().charAt(terminalIndex+1))) {
+								fstCutfst = terminalIndex;
+						}
+						fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+				
+						if(e1.toString().length() >=3) {
+							RESULT = e1 +"\n"+ i + " = " + fstoperand;
 						}else {
-							RESULT = i + " = " + e;
+							RESULT = i + " = " + e1;
 						}
 					:};
 	
@@ -1057,7 +1092,7 @@ functionName	::= IDENTIFIER:i
 function	::=	signature functionBody:b
 				{:
 					
-					RESULT = "beginfunc:\n "+b+"\nend_func;";
+					RESULT = "begin_func;\n"+b+"\nend_func;";
 				:};
 
 functionBody	::= block:b
@@ -1149,7 +1184,15 @@ primaryExpr	::=	operand:o
 				:}
 				| primaryExpr:p arguments:a
 				{:			
-					RESULT = a+"\n"+ p ;
+					String args = a.toString();
+					if(args.charAt(0) == '\n') {
+						args = args.substring(1);
+					}
+					if(p.toString().contains("call")) {
+						RESULT =  args+"\n" + p;
+					} else {
+						RESULT =  args+"\nt" + ++variable_count + " = call " +p + "\npop_params;";
+					}
 				:};
 
 selector	::= DOT IDENTIFIER:i
@@ -1283,6 +1326,7 @@ assignment	::=	expressionList:e assignOp:o expressionList:e1
 							fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					//System.out.println("ASSIGNMENT: " + e1.toString() + " OP " + fstoperand);
 					RESULT = e1 + "\n"+e+" "+o +" "+fstoperand;
 					//Z +="";
 				:};
