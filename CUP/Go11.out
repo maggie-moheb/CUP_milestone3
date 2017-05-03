@@ -1,6 +1,6 @@
 s = "constant"
 main:
-beginfunc:
+beginfunc: 
 push_params: s
 t0= call Println
 pop_params;
