@@ -221,9 +221,14 @@ ifStmt	::=	IF expression:e block:b
 			{:
 				Z +="";
 			:}
-			| IF expression block ELSE block
+			| IF expression:e block:b1 ELSE block:b2
 			{:
-				Z +="";
+			++label_count;
+				RESULT =  e + "\nIf t" + (variable_count-2) 
+						+ " Goto L"+label_count+"\nGoto L" 
+						+ ++label_count + "\nL" + (label_count-1)+":\n"+b1 + "\nGoto LL" +  (label_count-1)
+						+ "\nL"+label_count+":"
+						+"\n"+b2 + "\nLL" +  (label_count-1)+":";
 			:}
 			| IF simpleStmt:s SEMI_COLON expression block ELSE ifStmt
 			{:
@@ -664,7 +669,7 @@ arguments	::=	OPEN_PARAN CLOSE_PARAN
 				:}
 				| OPEN_PARAN expressionList:e CLOSE_PARAN
 				{:
-					RESULT="\npush_params: "+e;
+					RESULT="push_params: "+e;
 				:}
 				| OPEN_PARAN TYPE type COMMA expressionList:e CLOSE_PARAN
 				{:
