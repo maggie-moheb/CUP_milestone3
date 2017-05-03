@@ -156,8 +156,7 @@ statement	::=	declaration:d
 				:}
 				| ifStmt:is optionalSemiColon
 				{:
-					RESULT = is + "\nIf t" + variable_count+ " Goto L"+ ++label_count+"\nGoto L"
-							+ ++label_count + "\nL"+ (label_count - 1)+":\n";
+					RESULT = is;
 				:}
 				| switchStmt optionalSemiColon
 				{:
@@ -805,7 +804,7 @@ parameterDecl	::= identifierList type
 
 functionBody	::= block:b
 					{:
-					RESULT = "beginfunc: "+b+"\nend_func;";
+						RESULT = "beginfunc: "+b+"\nend_func;";
 					:};
 
 
