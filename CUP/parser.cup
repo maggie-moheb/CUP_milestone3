@@ -3,7 +3,7 @@ import java.io.*;
 parser code {:
   String Z = "";
   String S_L = "";
-  int variable_count = 0;
+  int variable_count = -1;
   String Q_I = "";
 :}
 /* Terminals (tokens returned by the scanner). */
@@ -37,9 +37,12 @@ nonterminal	sourceFile, packageClause, importDecls, importDecl, topLevelDecls,
 					element;
 
 
+
+
 precedence left OR_OP, AND_OP, REL_OP;
 precedence left PLUS, MINUS, BAR;
 precedence left ASTRISK, SLASH, SHIFT_LEFT, SHIFT_RIGHT, PERCENT, AMBERSAND;
+precedence left ASTRISK, SLASH, SHIFT_LEFT, SHIFT_RIGHT, PERCENT, AMBERSAND, PLUS, MINUS, BAR;
 precedence left EXCLAMATION, LESS_DASH;
 precedence left OPEN_PARAN, CLOSE_PARAN;
 precedence left COMMA, SEMI_COLON;
@@ -70,15 +73,16 @@ topLevelDecls	::=	topLevelDecl:d1 topLevelDecls:d2
 
 topLevelDecl	::=	declaration:d 
 					{:
+						//System.out.println("DECLARATION: "+d);
 						RESULT = d;
 					:}
 					| functionDecl:fd optionalSemiColon:osc
 					{:
-						RESULT = fd +""+ osc;
+						RESULT = fd;
 					:}
 					| methodDecl:md optionalSemiColon:osc
 					{:
-						RESULT = md+""+osc;
+						RESULT = md;
 					:};
 
 declaration	::=	constDecl:d SEMI_COLON:sc
@@ -92,6 +96,7 @@ declaration	::=	constDecl:d SEMI_COLON:sc
 				:}
 				| varDecl:vd SEMI_COLON:sc
 				{:
+					//System.out.println("DECLARATION: "+vd);
 					RESULT = vd;
 				:};
 				
@@ -122,9 +127,9 @@ constSpec	::=	IDENTIFIER:i
 				{:
 					RESULT = i;
 				:}
-				| IDENTIFIER:i EQUAL expression
+				| IDENTIFIER:i EQUAL expression:e
 				{:
-					RESULT = i;
+					RESULT = i +" = " +e;
 				:}
 				| IDENTIFIER:i type EQUAL expression:e
 				{:
@@ -362,13 +367,13 @@ breakStmt	::=	BREAK
 
 
 
-identifierList	::=	IDENTIFIER
+identifierList	::=	IDENTIFIER:i
 					{:
-						Z +="";
+						RESULT = i;
 					:}
-					| IDENTIFIER COMMA identifierList
+					| IDENTIFIER:i COMMA identifierList:i1
 					{:
-						Z +="";
+						RESULT = i + "" + i1;
 					:};
 
 expressionList	::=	expression:e
@@ -389,7 +394,19 @@ expression	::=	unaryExpr:u
 				:}
 				| expression:e1 binaryOp:o expression:e2
 				{:
-					RESULT = e1+""+o+""+e2;
+					RESULT = "";
+					String fstoperand = e1.toString();
+					String sndoperand = e2.toString();
+					if(e1.toString().length() >=3) {
+						RESULT += e1.toString();
+						fstoperand = e1.toString().substring(1,3);
+					}
+					if(e2.toString().length() >=3) {
+						RESULT += e2.toString();
+						sndoperand = e2.toString().substring(1,3);
+					}
+					variable_count++;
+					RESULT += "\nt"+variable_count+" = "+fstoperand +""+ o + ""+ sndoperand;
 				:};
 
 
@@ -535,8 +552,9 @@ typeSpec	::=	IDENTIFIER type
 
 varDecl	::=	VAR varSpec:vs 
 			{:
-				RESULT="t"+variable_count+vs + " = " + "t"+variable_count;
-				variable_count++;
+				//RESULT="t"+variable_count+vs + " = " + "t"+variable_count;
+				RESULT = vs + "t" + variable_count;
+				//variable_count++;
 			:}
 			| VAR OPEN_PARAN varSpecs CLOSE_PARAN
 			{:
@@ -555,7 +573,7 @@ varSpecs	::= varSpec SEMI_COLON varSpecs
 
 varSpec	::= IDENTIFIER:i EQUAL expression:e
 			{:
-				RESULT = " = "+e+"\n"+i;
+				RESULT = e + "\n" + i + " = ";
 			:}
 			| IDENTIFIER type
 			{:
@@ -568,9 +586,9 @@ varSpec	::= IDENTIFIER:i EQUAL expression:e
 			
 
 
-shortVarDecl	::= identifierList	COLON_EQUAL	expression
+shortVarDecl	::= identifierList:i COLON_EQUAL expression:e
 					{:
-						Z +="";
+						RESULT = e +"\n"+ i + " = " + e.toString().substring(1,3);
 					:};
 
 
@@ -797,8 +815,9 @@ operandName	::=	IDENTIFIER:i
 
 qualifiedIdent	::=	DOT packageName DOT IDENTIFIER:i
 					{:
-						RESULT = "t"+ variable_count+ "= call "+i + "\n"+"pop_params;";
 						variable_count++;
+						RESULT = "t"+ variable_count+ "= call "+i + "\n"+"pop_params;";
+						
 					:};
 					
 					
@@ -974,13 +993,13 @@ binaryOp	::= OR_OP
 				{:
 					Z +="";
 				:}
-				| REL_OP
+				| REL_OP:ro
 				{:
-					Z +="";
+					RESULT = ro;
 				:}
-				| addOp
+				| addOp:ap
 				{:
-					Z +="";
+					RESULT=ap;
 				:}
 				| mulOp:mo
 				{:
@@ -989,21 +1008,21 @@ binaryOp	::= OR_OP
 
 addOp	::=	PLUS
 			{:
-				Z +="";
+				RESULT="+";
 			:}
 			| MINUS
 			{:
-				Z +="";
+				RESULT="-";
 			:}
 			| BAR
 			{:
-				Z +="";
+				RESULT="|";
 			:};
 
 
 mulOp	::=	ASTRISK
 			{:
-				Z +="";
+				RESULT="*";
 			:}
 			| SLASH
 			{:
@@ -1011,15 +1030,15 @@ mulOp	::=	ASTRISK
 			:}
 			| SHIFT_LEFT
 			{:
-				Z +="";
+				RESULT="<<";
 			:}
 			| SHIFT_RIGHT
 			{:
-				Z +="";
+				RESULT=">>";
 			:}
 			| PERCENT
 			{:
-				Z +="";
+				RESULT="%";
 			:}
 			| AMBERSAND
 			{:
