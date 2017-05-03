@@ -1,0 +1,23 @@
+package main
+
+import ("fmt")
+
+const s string = "constant";
+
+func main() {
+
+	.fmt.Println(s);
+	
+	const n int = 5000;
+    var d = 3 / n;
+     
+    .fmt.Println(d);
+    
+    
+    var e = d - n * 2 + d;
+    t := ( e != 5);
+    
+    
+    const m = 16;
+    var mShifted = m >> 2;
+}

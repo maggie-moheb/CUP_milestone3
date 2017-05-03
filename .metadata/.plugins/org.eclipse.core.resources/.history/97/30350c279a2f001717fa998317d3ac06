@@ -1,0 +1,21 @@
+s = "constant"
+main:
+beginfunc:
+push_params: s
+t0= call Println
+pop_params;
+n = 5000
+
+t1 = 3/n
+d = t1
+
+push_params: d
+t2= call Println
+pop_params;
+
+t3 = 2+d
+t4 = n*t3
+t5 = d-t3
+e = t5
+
+end_func;
