@@ -4,6 +4,7 @@ parser code {:
   String Z = "";
   String S_L = "";
   int variable_count = -1;
+  int label_count = -1;
   String Q_I = "";
 :}
 /* Terminals (tokens returned by the scanner). */
@@ -153,9 +154,10 @@ statement	::=	declaration:d
 				{:
 					RESULT = b;
 				:}
-				| ifStmt optionalSemiColon
+				| ifStmt:is optionalSemiColon
 				{:
-					Z +="";
+					RESULT = is + "\nIf t" + variable_count+ " Goto L"+ ++label_count+"\nGoto L"
+							+ ++label_count + "\nL"+ (label_count - 1)+":\n";
 				:}
 				| switchStmt optionalSemiColon
 				{:
@@ -206,9 +208,9 @@ assignment	::=	expressionList:e assignOp:o expressionList:e2
 				:};
 
 
-ifStmt	::=	IF expression block
+ifStmt	::=	IF expression:e block
 			{:
-				Z +="";
+				RESULT = e;
 			:}
 			| IF simpleStmt:s SEMI_COLON expression block
 			{:
@@ -807,16 +809,14 @@ functionBody	::= block:b
 
 block	::= OPEN_CURLY statementList:l CLOSE_CURLY
 			{:
-
-				RESULT = "beginfunc:"+l+"\nend_func;";
+				
+				RESULT = "beginfunc: "+l+"\nend_func;";
 			:};
 
 
 statementList	::=	statement:s statementList:s1
 					{:
 						RESULT = s+"\n"+s1;
-
-
 					:}
 					| 
 					{:
