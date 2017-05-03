@@ -32,7 +32,7 @@ nonterminal	sourceFile, packageClause, importDecls, importDecl, topLevelDecls,
 					methodName, receiver, receiverType, simpleStmt, returnStmt, breakStmt, 
 					ifStmt, switchStmt, forStmt, expressionStmt, incDecStmt, assignment, 
 					assignOp, exprSwitchStmt, initStmt, postStmt, condition, forClause, 
-					exprCaseClauses, exprCaseClause, exprSwitchCase, assignOpGroup;
+					exprCaseClauses, exprCaseClause, exprSwitchCase;
 
 precedence left OR_OP, AND_OP;
 precedence left REL_OP;
@@ -51,7 +51,7 @@ sourceFile	::=	packageClause optionalSemiColon importDecls topLevelDecls:d
 				:}
 				| packageClause optionalSemiColon importDecls:d
 				{:
-					RESULT = d;
+					RESULT = d.toString().replace("\n\n", "\n");
 				:};
 				
 optionalSemiColon	::=	SEMI_COLON
@@ -139,8 +139,8 @@ methodName	::=	IDENTIFIER
 				
 block	::= OPEN_CURLY statementList:l CLOSE_CURLY
 			{:
-			RESULT = l;
-			//RESULT = "beginfunc: "+l+"\nend_func;";
+				
+				RESULT = l;
 			:};
 			
 statementList	::=	statement:s statementList:s1
@@ -1041,11 +1041,12 @@ shortVarDecl	::= identifierList:i COLON_EQUAL expression:e
 	
 functionDecl	::= FUNC functionName:f function:f2
 					{:
+						//System.out.println("functionDecl " + f.toString() +"*********"+ f2.toString());
 						RESULT = "\n"+ f +"\n" +f2;
 					:}
-					| FUNC functionName signature
+					| FUNC functionName:f signature
 					{:
-						Z +="";
+						RESULT = f;
 					:};
 
 functionName	::= IDENTIFIER:i
@@ -1055,12 +1056,14 @@ functionName	::= IDENTIFIER:i
 
 function	::=	signature functionBody:b
 				{:
-					RESULT = b;
+					
+					RESULT = "beginfunc:\n "+b+"\nend_func;";
 				:};
 
 functionBody	::= block:b
 					{:
-						RESULT = "beginfunc: "+b+"\nend_func;";
+						//System.out.println("FUNCTION: " + b.toString());
+						RESULT = b;
 					:};
 
 methodDecl	::= FUNC receiver methodName function
@@ -1184,23 +1187,26 @@ receiverType	::=	OPEN_PARAN ASTRISK typeName CLOSE_PARAN
 					:};
 					
 statement	::=	declaration:d
-				{:
+				{:						
 					RESULT = d;
 				:}
 				| simpleStmt:d SEMI_COLON
-				{:				
+				{:	
 					RESULT = d;
 				:}
 				| returnStmt:d SEMI_COLON
 				{:
-					RESULT ="";
+					
+					RESULT = d;
 				:}
 				| breakStmt SEMI_COLON
 				{:
+					
 					RESULT ="";
 				:}
 				| block:b optionalSemiColon
 				{:
+					
 					RESULT = b;
 				:}
 				| ifStmt:is optionalSemiColon
@@ -1209,6 +1215,7 @@ statement	::=	declaration:d
 				:}
 				| switchStmt optionalSemiColon
 				{:
+					//System.out.println("STATEMENT: " + is.toString());
 					Z +="";
 				:}
 				| forStmt optionalSemiColon
@@ -1248,29 +1255,66 @@ incDecStmt	::= expression INCREMENT
 					Z +="";
 				:};
 
-assignment	::=	expressionList:e assignOp:o expressionList:e2
+assignment	::=	expressionList:e assignOp:o expressionList:e1
 				{:
-					RESULT = e+" "+o+"\n"+e2;
-					Z +="";
+					String fstoperand = e1.toString();
+					int fstCutfst = 0;
+					int scndCutfst = e1.toString().length();
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
+					}
+					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
+					if(terminalIndex > -1 && terminalIndex < e1.toString().substring(0, scndCutfst).length() 
+						&& Character.isDigit(e1.toString().charAt(terminalIndex+1))) {
+							fstCutfst = terminalIndex;
+					}
+					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					RESULT = e1 + "\n"+e+" "+o +" "+fstoperand;
+					//Z +="";
 				:};
 
-assignOp	::=	assignOpGroup EQUAL{:
+assignOp	::=	PLUS EQUAL
+				{:
+					RESULT = "+=";
+				:}
+				| MINUS EQUAL
+				{:
+					RESULT = "-=";
+				:}
+				| ASTRISK EQUAL
+				{:
+					RESULT = "*=";
+				:}
+				| SLASH EQUAL
+				{:
+					RESULT = "/=";
+				:}
+				| SHIFT_LEFT EQUAL
+				{:
+					RESULT = "<<=";
+				:}
+				| SHIFT_RIGHT EQUAL
+				{:
+					RESULT = ">>=";
+				:}| EQUAL
+				{:
+					RESULT = "=";
 				:};
 
-assignOpGroup ::= PLUS{:
-				:}
-				|MINUS{:
-				:}
-				|ASTRISK{:
-				:}
-				|SLASH{:
-				:}
-				|SHIFT_LEFT{:
-				:}
-				|SHIFT_RIGHT{:
-				:}
-				|{:
-				:};
 
 ifStmt	::=	IF expression:e block:b
 			{:
@@ -1411,13 +1455,14 @@ postStmt	::=	simpleStmt:s
 					RESULT = s;
 				:};
 
-returnStmt	::=	RETURN
+returnStmt	::=	RETURN:r
 				{:
-					Z +="";
+					RESULT = r;
 				:}
-				| RETURN expressionList
+				| RETURN:r expressionList:el
 				{:
-					Z +="";
+					String elist = el.toString().replace("\n", ",");
+					RESULT = r+" "+elist;
 				:};
 
 breakStmt	::=	BREAK
