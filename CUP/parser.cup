@@ -208,13 +208,14 @@ assignment	::=	expressionList:e assignOp:o expressionList:e2
 				:};
 
 
-ifStmt	::=	IF expression:e block
+ifStmt	::=	IF expression:e block:b
 			{:
-				RESULT = e;
+				//System.out.println("da el block: " + b);
+				RESULT = e + "" + b;
 			:}
-			| IF simpleStmt:s SEMI_COLON expression block
+			| IF simpleStmt:s SEMI_COLON expression:e block:b
 			{:
-				RESULT = s;
+				RESULT = s + "" + e + "" + b;
 			:}
 			| IF expression block ELSE ifStmt
 			{:
@@ -226,7 +227,7 @@ ifStmt	::=	IF expression:e block
 			:}
 			| IF simpleStmt:s SEMI_COLON expression block ELSE ifStmt
 			{:
-			RESULT = s;
+				RESULT = s;
 				Z +="";
 			:}
 			| IF simpleStmt:s SEMI_COLON expression block ELSE block
@@ -803,14 +804,14 @@ parameterDecl	::= identifierList type
 
 functionBody	::= block:b
 					{:
-					RESULT = b;
+					RESULT = "beginfunc: "+b+"\nend_func;";
 					:};
 
 
 block	::= OPEN_CURLY statementList:l CLOSE_CURLY
 			{:
-				
-				RESULT = "beginfunc: "+l+"\nend_func;";
+				RESULT = l;
+				//RESULT = "beginfunc: "+l+"\nend_func;";
 			:};
 
 
