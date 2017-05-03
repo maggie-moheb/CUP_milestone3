@@ -32,9 +32,10 @@ nonterminal	sourceFile, packageClause, importDecls, importDecl, topLevelDecls,
 					methodName, receiver, receiverType, simpleStmt, returnStmt, breakStmt, 
 					ifStmt, switchStmt, forStmt, expressionStmt, incDecStmt, assignment, 
 					assignOp, exprSwitchStmt, initStmt, postStmt, condition, forClause, 
-					exprCaseClauses, exprCaseClause, exprSwitchCase, assignOpGroup, Group2;
+					exprCaseClauses, exprCaseClause, exprSwitchCase, assignOpGroup;
 
-precedence left OR_OP, AND_OP, REL_OP;
+precedence left OR_OP, AND_OP;
+precedence left REL_OP;
 precedence left PLUS, MINUS;
 precedence left ASTRISK, SLASH, SHIFT_LEFT, SHIFT_RIGHT, PERCENT, AMBERSAND;
 precedence left EXCLAMATION;
@@ -146,6 +147,7 @@ block	::= OPEN_CURLY statementList:l CLOSE_CURLY
 			RESULT = l;
 			//RESULT = "beginfunc: "+l+"\nend_func;";
 			:};
+			
 statementList	::=	statement:s statementList:s1
 					{:
 						RESULT = s+"\n"+s1;
@@ -243,8 +245,6 @@ expressionList	::=	expression:e
 
 expression	::=	unaryExpr:u
 				{:
-					//System.out.println("expression " + u);
-					//operandQueue.add(u.toString());
 					RESULT = u;
 				:}
 				| expression:e1 REL_OP:o expression:e2
@@ -256,8 +256,22 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -266,9 +280,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -290,8 +317,22 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -300,9 +341,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -324,8 +378,23 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(e1.toString().charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -334,9 +403,19 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
-						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(temp.charAt(lstIdxEq -1) != '=') {
+							foundEq = true;
+							break;
+						}
+						temp = temp.substring(0, lstIdxEq-1);
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -358,8 +437,23 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(e1.toString().charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -368,9 +462,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -392,8 +499,23 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(e1.toString().charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -402,9 +524,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -426,8 +561,23 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(e1.toString().charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -436,9 +586,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -460,8 +623,23 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(e1.toString().charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -470,9 +648,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -494,8 +685,23 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(e1.toString().charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -504,9 +710,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -528,8 +747,23 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(e1.toString().charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -538,9 +772,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -562,8 +809,22 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -572,9 +833,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -596,8 +870,23 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(e1.toString().charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -606,9 +895,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -630,8 +932,23 @@ expression	::=	unaryExpr:u
 					int scndCutfst = e1.toString().length();
 					int fstCutsnd = 0;
 					int scndCutsnd = e2.toString().length();
-					if(e1.toString().lastIndexOf('=') > -1) {
-						scndCutfst = e1.toString().lastIndexOf('=')-1;
+					int lstIdxEq = 0;
+					boolean foundEq = false;
+					String temp = e1.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(e1.toString().charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
+						
+							temp = temp.substring(0, lstIdxEq-1);
+						
+						}
+					}
+					if(foundEq) {
+						scndCutfst = lstIdxEq;
 						firstPart += e1+"";
 					}
 					int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
@@ -640,9 +957,22 @@ expression	::=	unaryExpr:u
 						fstCutfst = terminalIndex;
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
+					lstIdxEq = 0;
+					foundEq = false;
+					temp = e2.toString();
+					while(lstIdxEq > -1) {
+						lstIdxEq = temp.lastIndexOf('=');
+						if(lstIdxEq != -1) {
+							if(temp.charAt(lstIdxEq -1) != '=') {
+								foundEq = true;
+								break;
+							}
 						
-					if(e2.toString().lastIndexOf('=') > -1) {
-						scndCutsnd = e2.toString().lastIndexOf('=')-1;
+							temp = temp.substring(0, lstIdxEq-1);
+						}
+					}
+					if(foundEq) {
+						scndCutsnd = lstIdxEq;
 						firstPart += e2+"";
 					}
 					terminalIndex = e2.toString().substring(0, scndCutsnd).lastIndexOf('t');
@@ -661,20 +991,18 @@ unaryExpr	::=	primaryExpr:p
 					//System.out.println("unaryExpr " + p);
 					RESULT = p;
 				:}
-				| Group2:o unaryExpr:e
+				| MINUS:o unaryExpr:e
+				{:
+					RESULT = o+""+e;
+				:}
+				| EXCLAMATION:o unaryExpr:e
+				{:
+					RESULT = o+""+e;
+				:}
+				| ASTRISK:o unaryExpr:e
 				{:
 					RESULT = o+""+e;
 				:};	
-
-Group2 ::= MINUS:a {:
-					RESULT = a;
-				:} 
-				| EXCLAMATION:a {:
-					RESULT = a;
-				:}
-				| ASTRISK:a {:
-					RESULT = a;
-				:};
 			
 varDecl	::=	VAR varSpec:vs 
 			{:
