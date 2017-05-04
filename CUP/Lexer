@@ -84,9 +84,6 @@ SPACES=(\t|\b|\ )+
 <YYINITIAL, paran, curly, square> {CASE} {
   return new Symbol(sym.CASE, yytext());
 }
-<YYINITIAL, paran, curly, square> {STRUCT} {
-  return new Symbol(sym.STRUCT, yytext());
-}
 <YYINITIAL, paran, curly, square> {ELSE} {
   return new Symbol(sym.ELSE, yytext());
 }
@@ -176,14 +173,9 @@ SPACES=(\t|\b|\ )+
 <YYINITIAL, paran, curly, square> % {
   return new Symbol(sym.PERCENT, yytext());
 }
-<YYINITIAL, paran, curly, square> <- {
-  return new Symbol(sym.LESS_DASH, yytext());
-}
+
 <YYINITIAL, paran, curly, square> / {
   return new Symbol(sym.SLASH, yytext());
-}
-<YYINITIAL, paran, curly, square> \| {
-  return new Symbol(sym.BAR, yytext());
 }
 <YYINITIAL, paran, curly, square> << {
   return new Symbol(sym.SHIFT_LEFT, yytext());
@@ -259,27 +251,7 @@ SPACES=(\t|\b|\ )+
 <YYINITIAL> \} {
 	return new Symbol(sym.error, ("} has no matching { in line " + (yyline + 1)));
 }
-<YYINITIAL, paran, curly, square> \[ {
-	squareCounter++;
-	yybegin(square);
-	brackets.push('[');
-	return new Symbol(sym.OPEN_SQUARE, yytext());
-}
-<square> \] {
-	brackets.pop();
-	squareCounter--;
-	switch(brackets.peek()){
-		case '(': 
-				yybegin(paran); break;
-		case '[':
-			yybegin(square); break;
-		case '{':
-			yybegin(curly); break;
-		default:
-			yybegin(YYINITIAL); break;
-	}
-	return new Symbol(sym.CLOSE_SQUARE, yytext());
-}
+
 <paran, curly> \] {
 	if(squareCounter == 0){
 		return new Symbol(sym.error, ("] has no matching [ in line " + (yyline + 1)));

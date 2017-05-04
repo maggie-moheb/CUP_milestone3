@@ -218,11 +218,11 @@ constSpec	::=	IDENTIFIER:i
 				:}
 				| IDENTIFIER:i EQUAL expression:e
 				{:
-					RESULT = i +" = " +e;
+					RESULT = i +" =" +e;
 				:}
 				| IDENTIFIER:i type EQUAL expression:e
 				{:
-					RESULT = i+" = "+e;
+					RESULT = i+" ="+e;
 				:};
 
 identifierList	::=	IDENTIFIER:i
@@ -309,7 +309,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + ""+o+""+ sndoperand;
 				:}
 				|expression:e1 OR_OP:o expression:e2
 				{:
@@ -370,7 +370,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				|expression:e1 AND_OP:o expression:e2
 				{:
@@ -429,7 +429,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				|expression:e1 PLUS:o expression:e2
 				{:
@@ -491,7 +491,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				|expression:e1 MINUS:o expression:e2
 				{:
@@ -553,7 +553,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				| expression:e1 ASTRISK:o expression:e2
 				{:
@@ -615,7 +615,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				| expression:e1 SLASH:o expression:e2
 				{:
@@ -677,7 +677,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				|expression:e1 PERCENT:o expression:e2
 				{:
@@ -739,7 +739,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				|expression:e1 SHIFT_LEFT:o expression:e2
 				{:
@@ -801,7 +801,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				|expression:e1 SHIFT_RIGHT:o expression:e2
 				{:
@@ -862,7 +862,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				|expression:e1 AMBERSAND:o expression:e2
 				{:
@@ -924,7 +924,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:}
 				|expression:e1 EXCLAMATION:o expression:e2
 				{:
@@ -986,7 +986,7 @@ expression	::=	unaryExpr:u
 					sndoperand = e2.toString().substring(fstCutsnd, scndCutsnd);
 					fstoperand = fstoperand.replace("\n","").replace("\r","");
 					sndoperand = sndoperand.replace("\n","").replace("\r","");
-					RESULT = firstPart + "\nt" + ++variable_count + " = " + fstoperand + "" + o +""+ sndoperand;
+					RESULT = firstPart + "\nt" + ++variable_count + " =" + fstoperand + "" + o +""+ sndoperand;
 				:};
 		
 unaryExpr	::=	primaryExpr:p
@@ -1027,50 +1027,50 @@ varSpecs	::= varSpec:v SEMI_COLON varSpecs
 				
 varSpec	::= IDENTIFIER:i EQUAL expression:e
 			{:
-				RESULT = e + "\n" + i + " = ";
+				RESULT = e + "\n" + i + " =";
 			:}
 			| IDENTIFIER:i type:t
 			{:
-				RESULT = i+" "+t;
+				RESULT = i+""+t;
 			:}
 			| IDENTIFIER:i type:t EQUAL expression:e
 			{:
-				RESULT = i+" "+t+" "+e;
+				RESULT = i+""+t+""+e;
 			:};
 		
 shortVarDecl	::= identifierList:i COLON_EQUAL expression:e1
-					{:
-						String fstoperand = e1.toString();
-						int fstCutfst = 0;
-						int scndCutfst = e1.toString().length();
-						int lstIdxEq = 0;
-						boolean foundEq = false;
-						String temp = e1.toString();
-						while(lstIdxEq > -1) {
-							lstIdxEq = temp.lastIndexOf('=');
-							if(lstIdxEq != -1) {
-								if(temp.charAt(lstIdxEq -1) != '=') {
-									foundEq = true;
-									break;
-								}
-							
-								temp = temp.substring(0, lstIdxEq-1);
-							}
+					{:	
+				String fstoperand = e1.toString();
+				int fstCutfst = 0;
+				int scndCutfst = e1.toString().length();
+				int lstIdxEq = 0;
+				boolean foundEq = false;
+				String temp = e1.toString();
+				while(lstIdxEq > -1) {
+					lstIdxEq = temp.indexOf('=');
+					if(lstIdxEq != -1) {
+						if(temp.charAt(lstIdxEq +1) != '=') {
+							foundEq = true;
+							break;
 						}
-						if(foundEq) {
-							scndCutfst = lstIdxEq;
-						}
-						int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
-						if(terminalIndex > -1 && terminalIndex < e1.toString().substring(0, scndCutfst).length() 
-							&& Character.isDigit(e1.toString().charAt(terminalIndex+1))) {
-								fstCutfst = terminalIndex;
-						}
-						fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
-				
+					
+						temp = temp.substring(0, lstIdxEq+1);
+					}
+				}
+				if(foundEq) {
+					scndCutfst = lstIdxEq;
+				}
+				int terminalIndex = e1.toString().substring(0, scndCutfst).lastIndexOf('t');
+				if(terminalIndex > -1 && terminalIndex < e1.toString().substring(0, scndCutfst).length() 
+					&& Character.isDigit(e1.toString().charAt(terminalIndex+1))) {
+						fstCutfst = terminalIndex;
+				}  
+				fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
 						if(e1.toString().length() >=3) {
-							RESULT = e1 +"\n"+ i + " = " + fstoperand;
+							RESULT = e1 +"\n"+ i + " =" + fstoperand;
 						}else {
-							RESULT = i + " = " + e1;
+							RESULT = i + " =" + e1;
+						 //  System.out.println("RESULT2: "+e1);
 						}
 					:};
 	
@@ -1261,9 +1261,9 @@ statement	::=	declaration:d
 					//System.out.println("STATEMENT: " + is.toString());
 					Z +="";
 				:}
-				| forStmt optionalSemiColon
+				| forStmt:f optionalSemiColon
 				{:
-					Z +="";
+					RESULT = f;
 				:};
 
 simpleStmt	::= expressionStmt:a
@@ -1289,13 +1289,13 @@ expressionStmt	::= expression:e
 						RESULT = e;
 					:};
 
-incDecStmt	::= expression INCREMENT
+incDecStmt	::= expression:e INCREMENT
 				{:
-					Z +="";
+						RESULT = e;
 				:}
-				| expression DECREMENT
+				| expression:e DECREMENT
 				{:
-					Z +="";
+						RESULT = e;
 				:};
 
 assignment	::=	expressionList:e assignOp:o expressionList:e1
@@ -1327,7 +1327,7 @@ assignment	::=	expressionList:e assignOp:o expressionList:e1
 					}
 					fstoperand = e1.toString().substring(fstCutfst, scndCutfst);
 					//System.out.println("ASSIGNMENT: " + e1.toString() + " OP " + fstoperand);
-					RESULT = e1 + "\n"+e+" "+o +" "+fstoperand;
+					RESULT = e1 + "\n"+e+""+o +""+fstoperand;
 					//Z +="";
 				:};
 
@@ -1371,7 +1371,7 @@ ifStmt	::=	IF expression:e block:b
 				RESULT =  s + "" + e + "" + b;
 			:}
 			| IF expression:e block:b ELSE ifStmt:fs
-			{:
+			{:  
 				++label_count;
 				RESULT = e + "\nIf t" + (variable_count-2) 
 						+ " Goto L"+label_count+"\nGoto L" 
@@ -1387,9 +1387,12 @@ ifStmt	::=	IF expression:e block:b
 						+ ++label_count + "\nL" + (label_count-1)+":\n"+b1 + "\nGoto LL" +  (label_count-1)
 						+ "\nL"+label_count+":"
 						+"\n"+b2 + "\nLL" +  (label_count-1)+":";
+												//System.out.println("IF "+ RESULT);
+
 			:}
 			| IF simpleStmt:e SEMI_COLON expression:e1 block:b ELSE ifStmt:fs
-			{:
+			{: 						
+
 				String fstoperand = e1.toString();
 				int fstCutfst = 0;
 				int scndCutfst = e1.toString().length();
@@ -1424,7 +1427,7 @@ ifStmt	::=	IF expression:e block:b
 						+"\n"+fs + "\nLL" +  (label_count-1)+":";
 			:}
 			| IF simpleStmt:s SEMI_COLON expression block ELSE block
-			{:
+			{: 
 				RESULT= s;			
 			:};
 
@@ -1474,19 +1477,19 @@ exprSwitchCase	::=	CASE expression
 						Z +="";
 					:};
 
-forStmt	::=	 FOR forClause block
+forStmt	::=	 FOR forClause:f block:b
 			{:
-				Z +="";
+				RESULT= f+" ::::: "+b;
 			:};
 
-forClause	::=	initStmt SEMI_COLON condition SEMI_COLON postStmt
+forClause	::=	initStmt:i SEMI_COLON condition:c SEMI_COLON postStmt:p
 				{:
-					Z +="";
+				RESULT= i+" ::::: "+c+" ::::: "+p;
 				:};
 
-condition	::=	expression
+condition	::=	expression:e
 				{:
-					Z +="";
+				RESULT = e;
 				:};
 
 initStmt	::=	simpleStmt:s
